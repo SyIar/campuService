@@ -31,19 +31,18 @@ public class JwtUtil {
         HashMap<String, Object> body = new HashMap<>();
         body.put("userId", user.getUserId());
         body.put("password", user.getPassword());
-        String jwt = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(body)
                 .setExpiration(new Date(System.currentTimeMillis() + 3600_000))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
-        return "Bearer " + jwt;
     }
 
     public static void validateToken(String token) {
         try {
             Map<String, Object> body = Jwts.parser()
                     .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace("Bearer ", ""))
+                    .parseClaimsJws(token)
                     .getBody();
             User user = new User();
             user.setUserId((int) body.get("userId"));

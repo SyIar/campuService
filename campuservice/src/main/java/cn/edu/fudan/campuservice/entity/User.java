@@ -30,4 +30,6 @@ public class User {
     @Column(name = "student_name")
     private String studentName;
 
+    @Column(name = "is_admin")
+    private boolean isAdmin;
 }

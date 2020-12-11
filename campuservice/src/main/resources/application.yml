@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/campuservice?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
-    username: root
-    password: 123456
+    url: jdbc:mysql://rm-uf6jtd86t80rf8de90o.mysql.rds.aliyuncs.com:3306/campuservice?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: fdss1706
+    password: Ss123456
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mysqlLocal
+ Source Server         : aliyun
  Source Server Type    : MySQL
- Source Server Version : 50729
- Source Host           : localhost:3306
+ Source Server Version : 50728
+ Source Host           : rm-uf6jtd86t80rf8de90o.mysql.rds.aliyuncs.com:3306
  Source Schema         : campuservice
 
  Target Server Type    : MySQL
- Target Server Version : 50729
+ Target Server Version : 50728
  File Encoding         : 65001
 
- Date: 04/12/2020 22:10:58
+ Date: 11/12/2020 18:48:25
 */
 
 SET NAMES utf8mb4;
@@ -56,16 +56,17 @@ CREATE TABLE `user`  (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `password` char(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `balance` int(10) NOT NULL DEFAULT 0,
+  `balance` int(10) NOT NULL DEFAULT -1,
   `student_id` int(11) NOT NULL,
   `student_name` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `is_admin` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'u1', '123123', 0, 1, 's1');
-INSERT INTO `user` VALUES (2, 'user1', '123123', 0, 1111111111, 's1');
+INSERT INTO `user` VALUES (1, 'u1', '123123', -1, 1, 's1', b'0');
+INSERT INTO `user` VALUES (2, 'user1', '123123', -1, 1111111111, 's1', b'0');
 
 SET FOREIGN_KEY_CHECKS = 1;

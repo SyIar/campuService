@@ -3,6 +3,7 @@ package cn.edu.fudan.campuservice.service;
 import cn.edu.fudan.campuservice.entity.Order;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
 import cn.edu.fudan.campuservice.repository.OrderRepository;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,19 @@ public class OrderService {
     public List<Order> searchOrderByAttribute(String attributeName, Object obj) {
         return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
                 -> criteriaBuilder.equal(root.get(attributeName), obj));
+    }
+
+    public List<Order> searchOrderByStartAndDestination(int start, int destination) {
+        List<Order> res = orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("start"), start),
+                criteriaBuilder.equal(root.get("destination"), destination)));
+        res.addAll(orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("start"), start),
+                criteriaBuilder.notEqual(root.get("destination"), destination))));
+        res.addAll(orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("destination"), destination),
+                criteriaBuilder.notEqual(root.get("start"), start))));
+        return res;
     }
 
 

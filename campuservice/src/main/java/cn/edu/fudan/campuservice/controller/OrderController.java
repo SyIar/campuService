@@ -63,4 +63,9 @@ public class OrderController {
     private Response searchOrderByDestination(int destination) {
         return Response.success(orderService.searchOrderByAttribute("destination", destination));
     }
+
+    @GetMapping("/searchOrderByStartAndDestination")
+    private Response searchOrderByStartAndDestination(int start, int destination) {
+        return Response.success(orderService.searchOrderByStartAndDestination(start, destination));
+    }
 }

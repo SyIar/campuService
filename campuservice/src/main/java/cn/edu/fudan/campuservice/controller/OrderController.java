@@ -24,6 +24,12 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/acceptOrder")
+    private Response acceptOrder(int orderId) {
+        orderService.updateOrderStatus(orderId, 1);
+        return Response.success("accept successfully");
+    }
+
     @GetMapping("/finishOrder")
     private Response finishOrder(int orderId) {
         orderService.updateOrderStatus(orderId, 3);

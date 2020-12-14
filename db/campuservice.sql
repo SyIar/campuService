@@ -11,7 +11,7 @@
  Target Server Version : 50728
  File Encoding         : 65001
 
- Date: 11/12/2020 18:48:25
+ Date: 14/12/2020 10:19:13
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,10 @@ CREATE TABLE `my_order`  (
   `accept_time` datetime(0) NULL DEFAULT NULL,
   `confirm_time` datetime(0) NULL DEFAULT NULL,
   `finish_time` datetime(0) NULL DEFAULT NULL,
+  `refuse_time` datetime(0) NULL DEFAULT NULL,
   `status` int(5) NULL DEFAULT NULL,
+  `poster_photo` varchar(2083) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `accepter_photo` varchar(2083) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`order_id`) USING BTREE,
   INDEX `poster_id`(`poster_id`) USING BTREE,
   INDEX `accepter_id`(`accepter_id`) USING BTREE,
@@ -45,8 +48,8 @@ CREATE TABLE `my_order`  (
 -- ----------------------------
 -- Records of my_order
 -- ----------------------------
-INSERT INTO `my_order` VALUES (1, 0, 1, 'description', 0, 3, 2, 1, '2020-12-02 00:00:00', NULL, NULL, NULL, 0);
-INSERT INTO `my_order` VALUES (2, 0, 1, 'description', 0, 3, 2, 1, '2020-12-02 14:23:35', NULL, NULL, NULL, 0);
+INSERT INTO `my_order` VALUES (1, 0, 1, 'description', 0, 3, 2, 1, '2020-12-02 00:00:00', NULL, NULL, NULL, NULL, 0, NULL, NULL);
+INSERT INTO `my_order` VALUES (2, 0, 1, 'description', 0, 3, 2, 1, '2020-12-02 14:23:35', NULL, NULL, NULL, NULL, 0, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for user

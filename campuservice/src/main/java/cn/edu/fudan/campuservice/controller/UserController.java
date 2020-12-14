@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping("/register")
     public Response register(User user) {
         user.setBalance(0);
-        userService.insertUser(user);
+        userService.saveUser(user);
         return Response.success("insert successfully");
     }
 

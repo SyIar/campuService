@@ -39,6 +39,10 @@ public class JwtUtil {
     }
 
     public static void validateToken(String token) {
+        if (token == null || "".equals(token)) {
+            throw new IllegalStateException("unauthorized");
+        }
+
         try {
             Map<String, Object> body = Jwts.parser()
                     .setSigningKey(SECRET)

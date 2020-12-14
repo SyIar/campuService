@@ -1,18 +1,23 @@
 package cn.edu.fudan.campuservice.service;
 
 import cn.edu.fudan.campuservice.entity.Order;
+import cn.edu.fudan.campuservice.entity.User;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
+import cn.edu.fudan.campuservice.exception.NoSuchUserException;
 import cn.edu.fudan.campuservice.repository.OrderRepository;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 @SuppressWarnings("unchecked")
 public class OrderService {
     private final OrderRepository orderRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public OrderService(OrderRepository orderRepository) {
@@ -27,7 +32,7 @@ public class OrderService {
         }
     }
 
-    public Order insertOrder(Order order) {
+    public Order saveOrder(Order order) {
         return orderRepository.save(order);
     }
 
@@ -49,10 +54,43 @@ public class OrderService {
         return res;
     }
 
-
-    public void updateOrderStatus(int orderId, int status) {
+    public void acceptOrder(int orderId, int accepterId) {
         Order order = orderRepository.getOne(orderId);
-        order.setStatus(status);
+        order.setStatus(1);
+        order.setAcceptTime(new Date());
+        order.setAccepterId(accepterId);
+        orderRepository.save(order);
+    }
+
+    public void finishOrder(int orderId) {
+        Order order = orderRepository.getOne(orderId);
+        order.setStatus(2);
+        order.setFinishTime(new Date());
+        orderRepository.save(order);
+    }
+
+    public void confirmOrder(int orderId) {
+        Order order = orderRepository.getOne(orderId);
+        order.setStatus(3);
+        order.setConfirmTime(new Date());
+        int price = order.getPrice();
+        try {
+            User poster = userService.getUser(order.getAccepterId());
+            User accepter = userService.getUser(order.getPosterId());
+            poster.setBalance(poster.getBalance() - price);
+            accepter.setBalance(poster.getBalance() + price);
+            userService.saveUser(poster);
+            userService.saveUser(accepter);
+        } catch (NoSuchUserException e) {
+            e.printStackTrace();
+        }
+        orderRepository.save(order);
+    }
+
+    public void refuseOrder(int orderId) {
+        Order order = orderRepository.getOne(orderId);
+        order.setStatus(4);
+        order.setRefuseTime(new Date());
         orderRepository.save(order);
     }
 }

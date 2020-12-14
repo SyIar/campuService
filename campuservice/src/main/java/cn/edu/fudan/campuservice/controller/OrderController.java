@@ -4,6 +4,7 @@ import cn.edu.fudan.campuservice.entity.Order;
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
 import cn.edu.fudan.campuservice.service.OrderService;
+import cn.edu.fudan.campuservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,13 +83,27 @@ public class OrderController {
         return Response.success(orderService.searchOrderByStartAndDestination(start, destination));
     }
 
+    @GetMapping("/searchPostedOrder")
+    private Response searchPostedOrder(@RequestHeader("Authorization") String token) {
+        return Response.success(orderService.searchPostedOrder(JwtUtil.validateToken(token).getUserId()));
+    }
+
+    @GetMapping("/getRunningOrder")
+    private Response getRunningOrder(@RequestHeader("Authorization") String token) {
+        return Response.success(orderService.getRunningOrder(JwtUtil.validateToken(token).getUserId()));
+    }
+
+    @GetMapping("/getRunningOrder")
+    private Response getWaitingOrder(@RequestHeader("Authorization") String token) {
+        return Response.success(orderService.getWaitingOrder(JwtUtil.validateToken(token).getUserId()));
+    }
     @PostMapping("/uploadPosterPhoto")
-    private Response uploadPosterPhoto(MultipartFile file){
+    private Response uploadPosterPhoto(MultipartFile file) {
         return null;
     }
 
     @PostMapping("/uploadAccepterPhoto")
-    private Response uploadAccepterPhoto(MultipartFile file){
+    private Response uploadAccepterPhoto(MultipartFile file) {
         return null;
     }
 }

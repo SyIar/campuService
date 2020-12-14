@@ -54,6 +54,25 @@ public class OrderService {
         return res;
     }
 
+    public List<Order> searchPostedOrder(int userId) {
+        return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.and(criteriaBuilder.notEqual(root.get("posterId"), userId),
+                criteriaBuilder.equal(root.get("status"), 0)));
+    }
+
+    public List<Order> getRunningOrder(int userId) {
+        return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("accepter"), userId),
+                criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), 1), criteriaBuilder.equal(root.get("status"), 2))));
+    }
+
+    public List<Order> getWaitingOrder(int userId) {
+        return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("posterId"), userId),
+                criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), 0),
+                        criteriaBuilder.equal(root.get("status"), 1), criteriaBuilder.equal(root.get("status"), 2))));
+    }
+
     public void acceptOrder(int orderId, int accepterId) {
         Order order = orderRepository.getOne(orderId);
         order.setStatus(1);

@@ -38,7 +38,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static void validateToken(String token) {
+    public static User validateToken(String token) {
         if (token == null || "".equals(token)) {
             throw new IllegalStateException("unauthorized");
         }
@@ -56,6 +56,7 @@ public class JwtUtil {
             if (!jwtUtil.userService.authenUser(user)) {
                 throw new Exception("wrong password");
             }
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Invalid Token " + e.getMessage());

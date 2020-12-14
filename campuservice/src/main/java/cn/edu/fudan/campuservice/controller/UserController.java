@@ -34,9 +34,9 @@ public class UserController {
 
     @PostMapping("/register")
     public Response register(@RequestBody User user) {
-        user.setBalance(0);
+        user.setBalance(-1);
         userService.saveUser(user);
-        return Response.success("insert successfully");
+        return Response.success(JwtUtil.generateToken(user));
     }
 
     @GetMapping("/user/{id}")

@@ -50,7 +50,7 @@ public class OrderController {
     }
 
     @PostMapping("/postOrder")
-    private Response insertOrder(Order order) {
+    private Response insertOrder(@RequestBody Order order) {
         order.setPostTime(new Date());
         order.setStatus(0);
         orderService.saveOrder(order);

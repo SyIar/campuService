@@ -6,10 +6,7 @@ import cn.edu.fudan.campuservice.exception.NoSuchUserException;
 import cn.edu.fudan.campuservice.service.UserService;
 import cn.edu.fudan.campuservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -36,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Response register(User user) {
+    public Response register(@RequestBody User user) {
         user.setBalance(0);
         userService.saveUser(user);
         return Response.success("insert successfully");

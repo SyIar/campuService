@@ -1,5 +1,6 @@
 package cn.edu.fudan.campuservice.controller;
 
+import cn.edu.fudan.campuservice.annotation.ParamCheck;
 import cn.edu.fudan.campuservice.entity.Order;
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
@@ -18,7 +19,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{orderId}")
-    private Response getOrderById(@PathVariable Integer orderId) {
+    public Response getOrderById(@PathVariable Integer orderId) {
         try {
             return Response.success(orderService.getOrder(orderId));
         } catch (NoSuchOrderException e) {
@@ -27,31 +28,31 @@ public class OrderController {
     }
 
     @GetMapping("/acceptOrder")
-    private Response acceptOrder(int orderId, int accepterId) {
+    public Response acceptOrder(@ParamCheck Integer orderId, @ParamCheck Integer accepterId) {
         orderService.acceptOrder(orderId, accepterId);
         return Response.success("accept successfully");
     }
 
     @GetMapping("/finishOrder")
-    private Response finishOrder(int orderId) {
+    public Response finishOrder(@ParamCheck Integer orderId) {
         orderService.finishOrder(orderId);
         return Response.success("finish successfully");
     }
 
     @GetMapping("/confirmOrder")
-    private Response confirmOrder(int orderId) {
+    public Response confirmOrder(@ParamCheck Integer orderId) {
         orderService.confirmOrder(orderId);
         return Response.success("confirm successfully");
     }
 
     @GetMapping("/refuseOrder")
-    private Response refuseOrder(int orderId) {
+    public Response refuseOrder(@ParamCheck Integer orderId) {
         orderService.refuseOrder(orderId);
         return Response.success("refuse successfully");
     }
 
     @PostMapping("/postOrder")
-    private Response insertOrder(@RequestBody Order order) {
+    public Response insertOrder(@RequestBody Order order) {
         order.setPostTime(new Date());
         order.setStatus(0);
         orderService.saveOrder(order);
@@ -59,51 +60,47 @@ public class OrderController {
     }
 
     @GetMapping("/getOrderByPoster")
-    private Response getOrderByPoster(int posterId) {
+    public Response getOrderByPoster(@ParamCheck Integer posterId) {
         return Response.success(orderService.searchOrderByAttribute("posterId", posterId));
     }
 
     @GetMapping("/getOrderByAccepter")
-    private Response getOrderByAccepter(int accepterId) {
+    public Response getOrderByAccepter(@ParamCheck Integer accepterId) {
         return Response.success(orderService.searchOrderByAttribute("accepterId", accepterId));
     }
 
     @GetMapping("/searchOrderByStart")
-    private Response searchOrderByStart(int start) {
+    public Response searchOrderByStart(@ParamCheck Integer start) {
         return Response.success(orderService.searchOrderByAttribute("start", start));
     }
 
     @GetMapping("/searchOrderByDestination")
-    private Response searchOrderByDestination(int destination) {
+    public Response searchOrderByDestination(@ParamCheck Integer destination) {
         return Response.success(orderService.searchOrderByAttribute("destination", destination));
     }
 
-    @GetMapping("/searchOrderByStartAndDestination")
-    private Response searchOrderByStartAndDestination(int start, int destination) {
-        return Response.success(orderService.searchOrderByStartAndDestination(start, destination));
-    }
-
-    @GetMapping("/searchPostedOrder")
-    private Response searchPostedOrder(@RequestHeader("Authorization") String token) {
-        return Response.success(orderService.searchPostedOrder(JwtUtil.validateToken(token).getUserId()));
+    @GetMapping("/search")
+    public Response search(@RequestHeader("Authorization") String token, @ParamCheck Integer start, @ParamCheck Integer destination) {
+        return Response.success(orderService.search(JwtUtil.validateToken(token).getUserId(), start, destination));
     }
 
     @GetMapping("/getRunningOrder")
-    private Response getRunningOrder(@RequestHeader("Authorization") String token) {
+    public Response getRunningOrder(@RequestHeader("Authorization") String token) {
         return Response.success(orderService.getRunningOrder(JwtUtil.validateToken(token).getUserId()));
     }
 
-    @GetMapping("/getRunningOrder")
-    private Response getWaitingOrder(@RequestHeader("Authorization") String token) {
+    @GetMapping("/getWaitingOrder")
+    public Response getWaitingOrder(@RequestHeader("Authorization") String token) {
         return Response.success(orderService.getWaitingOrder(JwtUtil.validateToken(token).getUserId()));
     }
+
     @PostMapping("/uploadPosterPhoto")
-    private Response uploadPosterPhoto(MultipartFile file) {
+    public Response uploadPosterPhoto(MultipartFile file) {
         return null;
     }
 
     @PostMapping("/uploadAccepterPhoto")
-    private Response uploadAccepterPhoto(MultipartFile file) {
+    public Response uploadAccepterPhoto(MultipartFile file) {
         return null;
     }
 }

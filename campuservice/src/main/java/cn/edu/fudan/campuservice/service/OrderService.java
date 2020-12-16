@@ -8,6 +8,7 @@ import cn.edu.fudan.campuservice.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
 import java.util.Date;
 import java.util.List;
 
@@ -41,23 +42,21 @@ public class OrderService {
                 -> criteriaBuilder.equal(root.get(attributeName), obj));
     }
 
-    public List<Order> searchOrderByStartAndDestination(int start, int destination) {
-        List<Order> res = orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("start"), start),
-                criteriaBuilder.equal(root.get("destination"), destination)));
-        res.addAll(orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("start"), start),
-                criteriaBuilder.notEqual(root.get("destination"), destination))));
-        res.addAll(orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("destination"), destination),
-                criteriaBuilder.notEqual(root.get("start"), start))));
-        return res;
-    }
-
-    public List<Order> searchPostedOrder(int userId) {
+    public List<Order> search(int userId, int start, int destination) {
         return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> criteriaBuilder.and(criteriaBuilder.notEqual(root.get("posterId"), userId),
-                criteriaBuilder.equal(root.get("status"), 0)));
+                -> {
+            Predicate equalStart = criteriaBuilder.equal(root.get("start"), start);
+            Predicate notEqualStart = criteriaBuilder.notEqual(root.get("start"), start);
+            Predicate equalDestination = criteriaBuilder.equal(root.get("destination"), destination);
+            Predicate notEqualDestination = criteriaBuilder.notEqual(root.get("destination"), destination);
+            Predicate notEqualPosterId = criteriaBuilder.notEqual(root.get("posterId"), userId);
+            Predicate equalStatus = criteriaBuilder.equal(root.get("status"), 0);
+
+            Predicate p1 = criteriaBuilder.and(equalStart, equalDestination);
+            Predicate p2 = criteriaBuilder.and(equalStart, notEqualDestination);
+            Predicate p3 = criteriaBuilder.and(equalDestination, notEqualStart);
+            return criteriaBuilder.and(notEqualPosterId, equalStatus, criteriaBuilder.or(p1, p2, p3));
+        });
     }
 
     public List<Order> getRunningOrder(int userId) {

@@ -5,11 +5,15 @@ import cn.edu.fudan.campuservice.entity.Order;
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
 import cn.edu.fudan.campuservice.service.OrderService;
+import cn.edu.fudan.campuservice.utils.FileUtil;
 import cn.edu.fudan.campuservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 
 @RestController
@@ -95,12 +99,40 @@ public class OrderController {
     }
 
     @PostMapping("/uploadPosterPhoto")
-    public Response uploadPosterPhoto(MultipartFile file) {
-        return null;
+    public Response uploadPosterPhoto(MultipartFile file, @ParamCheck Integer orderId) {
+        if (file.isEmpty()) {
+            return new Response<>("400", "upload failed", "file is empty");
+        }
+
+        String fileName = FileUtil.getFileName(file.getOriginalFilename());
+        String filepath = FileUtil.getUploadPath();
+        try (BufferedOutputStream out = new BufferedOutputStream(
+                new FileOutputStream(new File(filepath + File.separator + fileName)))) {
+            out.write(file.getBytes());
+            out.flush();
+            orderService.updatePosterPhotoUrl(orderId, fileName);
+        } catch (Exception e) {
+            return new Response<>("400", "upload failed", e.getMessage());
+        }
+        return Response.success("upload successfully");
     }
 
     @PostMapping("/uploadAccepterPhoto")
-    public Response uploadAccepterPhoto(MultipartFile file) {
-        return null;
+    public Response uploadAccepterPhoto(MultipartFile file, @ParamCheck Integer orderId) {
+        if (file.isEmpty()) {
+            return new Response<>("400", "upload failed", "file is empty");
+        }
+
+        String fileName = FileUtil.getFileName(file.getOriginalFilename());
+        String filepath = FileUtil.getUploadPath();
+        try (BufferedOutputStream out = new BufferedOutputStream(
+                new FileOutputStream(new File(filepath + File.separator + fileName)))) {
+            out.write(file.getBytes());
+            out.flush();
+            orderService.updateAccepterPhotoUrl(orderId, fileName);
+        } catch (Exception e) {
+            return new Response<>("400", "upload failed", e.getMessage());
+        }
+        return Response.success("upload successfully");
     }
 }

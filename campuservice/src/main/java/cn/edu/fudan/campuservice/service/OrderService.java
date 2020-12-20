@@ -37,6 +37,26 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    public void updateAccepterPhotoUrl(Integer id, String url) throws NoSuchOrderException {
+        try {
+            Order order = orderRepository.getOne(id);
+            order.setAccepterPhotoUrl(url);
+            orderRepository.save(order);
+        } catch (Exception e) {
+            throw new NoSuchOrderException();
+        }
+    }
+
+    public void updatePosterPhotoUrl(Integer id, String url) throws NoSuchOrderException {
+        try {
+            Order order = orderRepository.getOne(id);
+            order.setPosterPhotoUrl(url);
+            orderRepository.save(order);
+        } catch (Exception e) {
+            throw new NoSuchOrderException();
+        }
+    }
+
     public List<Order> searchOrderByAttribute(String attributeName, Object obj) {
         return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
                 -> criteriaBuilder.equal(root.get(attributeName), obj));

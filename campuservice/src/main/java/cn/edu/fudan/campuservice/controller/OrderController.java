@@ -5,15 +5,11 @@ import cn.edu.fudan.campuservice.entity.Order;
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
 import cn.edu.fudan.campuservice.service.OrderService;
-import cn.edu.fudan.campuservice.utils.FileUtil;
 import cn.edu.fudan.campuservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
 
 @RestController
@@ -55,11 +51,24 @@ public class OrderController {
         return Response.success("refuse successfully");
     }
 
+//    @PostMapping("/postOrder")
+//    public Response insertOrder(@RequestBody Order order) {
+//        order.setPostTime(new Date());
+//        order.setStatus(0);
+//        orderService.saveOrder(order);
+//        return Response.success("insert successfully");
+//    }
+
     @PostMapping("/postOrder")
-    public Response insertOrder(@RequestBody Order order) {
+    public Response insertOrder(@RequestPart("order") Order order, @RequestPart("file") MultipartFile file) {
         order.setPostTime(new Date());
         order.setStatus(0);
         orderService.saveOrder(order);
+        try {
+            orderService.updatePosterPhoto(order.getOrderId(), file);
+        } catch (Exception e) {
+            return new Response<>("400", "insert failed", e.getMessage());
+        }
         return Response.success("insert successfully");
     }
 
@@ -104,13 +113,8 @@ public class OrderController {
             return new Response<>("400", "upload failed", "file is empty");
         }
 
-        String fileName = FileUtil.getFileName(file.getOriginalFilename());
-        String filepath = FileUtil.getUploadPath();
-        try (BufferedOutputStream out = new BufferedOutputStream(
-                new FileOutputStream(new File(filepath + File.separator + fileName)))) {
-            out.write(file.getBytes());
-            out.flush();
-            orderService.updatePosterPhotoUrl(orderId, fileName);
+        try {
+            orderService.updatePosterPhoto(orderId, file);
         } catch (Exception e) {
             return new Response<>("400", "upload failed", e.getMessage());
         }
@@ -123,13 +127,8 @@ public class OrderController {
             return new Response<>("400", "upload failed", "file is empty");
         }
 
-        String fileName = FileUtil.getFileName(file.getOriginalFilename());
-        String filepath = FileUtil.getUploadPath();
-        try (BufferedOutputStream out = new BufferedOutputStream(
-                new FileOutputStream(new File(filepath + File.separator + fileName)))) {
-            out.write(file.getBytes());
-            out.flush();
-            orderService.updateAccepterPhotoUrl(orderId, fileName);
+        try {
+            orderService.updateAccepterPhoto(orderId, file);
         } catch (Exception e) {
             return new Response<>("400", "upload failed", e.getMessage());
         }

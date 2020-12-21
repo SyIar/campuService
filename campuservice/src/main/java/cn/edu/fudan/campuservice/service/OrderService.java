@@ -5,8 +5,10 @@ import cn.edu.fudan.campuservice.entity.User;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
 import cn.edu.fudan.campuservice.exception.NoSuchUserException;
 import cn.edu.fudan.campuservice.repository.OrderRepository;
+import cn.edu.fudan.campuservice.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
 import java.util.Date;
@@ -37,24 +39,18 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public void updateAccepterPhotoUrl(Integer id, String url) throws NoSuchOrderException {
-        try {
-            Order order = orderRepository.getOne(id);
-            order.setAccepterPhotoUrl(url);
-            orderRepository.save(order);
-        } catch (Exception e) {
-            throw new NoSuchOrderException();
-        }
+    public void updateAccepterPhoto(Integer id, MultipartFile file) throws Exception {
+        String fileName = FileUtil.saveFile(file);
+        Order order = orderRepository.getOne(id);
+        order.setAccepterPhotoUrl(fileName);
+        orderRepository.save(order);
     }
 
-    public void updatePosterPhotoUrl(Integer id, String url) throws NoSuchOrderException {
-        try {
-            Order order = orderRepository.getOne(id);
-            order.setPosterPhotoUrl(url);
-            orderRepository.save(order);
-        } catch (Exception e) {
-            throw new NoSuchOrderException();
-        }
+    public void updatePosterPhoto(Integer id, MultipartFile file) throws Exception {
+        String fileName = FileUtil.saveFile(file);
+        Order order = orderRepository.getOne(id);
+        order.setPosterPhotoUrl(fileName);
+        orderRepository.save(order);
     }
 
     public List<Order> searchOrderByAttribute(String attributeName, Object obj) {

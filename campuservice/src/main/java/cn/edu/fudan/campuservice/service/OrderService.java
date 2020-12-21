@@ -58,6 +58,26 @@ public class OrderService {
                 -> criteriaBuilder.equal(root.get(attributeName), obj));
     }
 
+    public List<Order> searchOrderByPoster(int posterId) {
+        return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> {
+            Predicate status3 = criteriaBuilder.equal(root.get("status"), 3);
+            Predicate status4 = criteriaBuilder.equal(root.get("status"), 4);
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("posterId"), posterId),
+                    criteriaBuilder.or(status3, status4));
+        });
+    }
+
+    public List<Order> searchOrderByAccepter(int accepterId) {
+        return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> {
+            Predicate status3 = criteriaBuilder.equal(root.get("status"), 3);
+            Predicate status4 = criteriaBuilder.equal(root.get("status"), 4);
+            return criteriaBuilder.and(criteriaBuilder.equal(root.get("accepterId"), accepterId),
+                    criteriaBuilder.or(status3, status4));
+        });
+    }
+
     public List<Order> search(int userId, int start, int destination) {
         return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
                 -> {
@@ -77,7 +97,7 @@ public class OrderService {
 
     public List<Order> getRunningOrder(int userId) {
         return orderRepository.findAll((root, criteriaQuery, criteriaBuilder)
-                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("accepter"), userId),
+                -> criteriaBuilder.and(criteriaBuilder.equal(root.get("accepterId"), userId),
                 criteriaBuilder.or(criteriaBuilder.equal(root.get("status"), 1), criteriaBuilder.equal(root.get("status"), 2))));
     }
 
@@ -118,13 +138,6 @@ public class OrderService {
         } catch (NoSuchUserException e) {
             e.printStackTrace();
         }
-        orderRepository.save(order);
-    }
-
-    public void refuseOrder(int orderId) {
-        Order order = orderRepository.getOne(orderId);
-        order.setStatus(4);
-        order.setRefuseTime(new Date());
         orderRepository.save(order);
     }
 }

@@ -5,6 +5,7 @@ import cn.edu.fudan.campuservice.entity.Order;
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.exception.NoSuchOrderException;
 import cn.edu.fudan.campuservice.service.OrderService;
+import cn.edu.fudan.campuservice.utils.FileUtil;
 import cn.edu.fudan.campuservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,41 +46,22 @@ public class OrderController {
         return Response.success("confirm successfully");
     }
 
-    @GetMapping("/refuseOrder")
-    public Response refuseOrder(@ParamCheck Integer orderId) {
-        orderService.refuseOrder(orderId);
-        return Response.success("refuse successfully");
-    }
-
-//    @PostMapping("/postOrder")
-//    public Response insertOrder(@RequestBody Order order) {
-//        order.setPostTime(new Date());
-//        order.setStatus(0);
-//        orderService.saveOrder(order);
-//        return Response.success("insert successfully");
-//    }
-
     @PostMapping("/postOrder")
-    public Response insertOrder(@RequestPart("order") Order order, @RequestPart("file") MultipartFile file) {
+    public Response insertOrder(@RequestBody Order order) {
         order.setPostTime(new Date());
         order.setStatus(0);
         orderService.saveOrder(order);
-        try {
-            orderService.updatePosterPhoto(order.getOrderId(), file);
-        } catch (Exception e) {
-            return new Response<>("400", "insert failed", e.getMessage());
-        }
         return Response.success("insert successfully");
     }
 
     @GetMapping("/getOrderByPoster")
     public Response getOrderByPoster(@ParamCheck Integer posterId) {
-        return Response.success(orderService.searchOrderByAttribute("posterId", posterId));
+        return Response.success(orderService.searchOrderByPoster(posterId));
     }
 
     @GetMapping("/getOrderByAccepter")
-    public Response getOrderByAccepter(@ParamCheck Integer accepterId) {
-        return Response.success(orderService.searchOrderByAttribute("accepterId", accepterId));
+    public Response searchOrderByAccepter(@ParamCheck Integer accepterId) {
+        return Response.success(orderService.searchOrderByAccepter(accepterId));
     }
 
     @GetMapping("/searchOrderByStart")
@@ -108,17 +90,17 @@ public class OrderController {
     }
 
     @PostMapping("/uploadPosterPhoto")
-    public Response uploadPosterPhoto(MultipartFile file, @ParamCheck Integer orderId) {
+    public Response uploadPosterPhoto(MultipartFile file) {
         if (file.isEmpty()) {
             return new Response<>("400", "upload failed", "file is empty");
         }
 
         try {
-            orderService.updatePosterPhoto(orderId, file);
+            String fileName = FileUtil.saveFile(file);
+            return Response.success(fileName);
         } catch (Exception e) {
             return new Response<>("400", "upload failed", e.getMessage());
         }
-        return Response.success("upload successfully");
     }
 
     @PostMapping("/uploadAccepterPhoto")

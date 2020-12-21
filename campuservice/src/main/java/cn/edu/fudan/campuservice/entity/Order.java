@@ -43,9 +43,6 @@ public class Order {
     @Column(name = "confirm_time")
     private Date confirmTime;
 
-    @Column(name = "refuse_time")
-    private Date refuseTime;
-
     private int status;
 
     @Column(name = "poster_photo")

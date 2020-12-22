@@ -19,7 +19,7 @@ public class FileUtil {
         return fileName;
     }
 
-    private static String getUploadPath() {
+    public static String getUploadPath() {
         File path = null;
         try {
             path = new File(ResourceUtils.getURL("classpath:").getPath());

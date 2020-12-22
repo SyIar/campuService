@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.Date;
 
 @RestController
@@ -116,4 +120,81 @@ public class OrderController {
         }
         return Response.success("upload successfully");
     }
+
+    @Resource
+    private HttpServletResponse response;
+
+    @GetMapping("/getPhoto")
+    public void getPhoto(@ParamCheck String filePath) throws IOException {
+        String fullPath = FileUtil.getUploadPath() + File.separator + filePath;
+        File packetFile = new File(fullPath);
+        String fileName = packetFile.getName();
+        File file = new File(fullPath);
+        if (file.exists()) {
+            response.setHeader("content-type", "application/octet-stream");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+            byte[] buffer = new byte[1024];
+            FileInputStream fis = null;
+            BufferedInputStream bis = null;
+            try {
+                fis = new FileInputStream(file);
+                bis = new BufferedInputStream(fis);
+                OutputStream os = response.getOutputStream();
+                int i = bis.read(buffer);
+                while (i != -1) {
+                    os.write(buffer, 0, i);
+                    i = bis.read(buffer);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (bis != null) {
+                    try {
+                        bis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } else {
+            try {
+                response.setContentType("text/html;charset=UTF-8");
+                response.setHeader("Content-Type", "text/html;charset=UTF-8");
+                OutputStream os = response.getOutputStream();
+
+                os.write("对应文件不存在".getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+//    @GetMapping("/getPhoto")
+//    public Response getPhoto(@ParamCheck String filePath) throws IOException {
+//        ByteArrayOutputStream out = null;
+//        try {
+//            BufferedImage image = ImageIO.read(new FileInputStream(new File(FileUtil.getUploadPath() + File.separator + filePath)));
+//            out = new ByteArrayOutputStream();
+//
+//            if (image != null) {
+//                ImageIO.write(image, filePath.substring(filePath.lastIndexOf(".") + 1), out);
+//            }
+//            return Response.success(out.toByteArray());
+//        } catch (IOException e) {
+//            return new Response<>("400", "getError", e.getMessage());
+//        } finally {
+//            if (out != null) {
+//                out.flush();
+//                out.close();
+//            }
+//        }
+//    }
 }

@@ -37,7 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean isProtectedUrl(HttpServletRequest request) {
         return !PATH_MATCHER.match("/login", request.getServletPath())
-                && !PATH_MATCHER.match("/register", request.getServletPath());
+                && !PATH_MATCHER.match("/register", request.getServletPath())
+                && !PATH_MATCHER.match("/order/getPhoto", request.getServletPath());
     }
 
 }

@@ -140,4 +140,10 @@ public class OrderService {
         }
         orderRepository.save(order);
     }
+
+    public void refuseOrder(int orderId) {
+        Order order = orderRepository.getOne(orderId);
+        order.setStatus(4);
+        orderRepository.save(order);
+    }
 }

@@ -50,6 +50,12 @@ public class OrderController {
         return Response.success("confirm successfully");
     }
 
+    @GetMapping("/refuseOrder")
+    public Response refuseOrder(@ParamCheck Integer orderId) {
+        orderService.refuseOrder(orderId);
+        return Response.success("refuse successfully");
+    }
+
     @PostMapping("/postOrder")
     public Response insertOrder(@RequestBody Order order) {
         order.setPostTime(new Date());

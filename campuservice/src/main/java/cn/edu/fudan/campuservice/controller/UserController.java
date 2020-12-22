@@ -1,5 +1,6 @@
 package cn.edu.fudan.campuservice.controller;
 
+import cn.edu.fudan.campuservice.annotation.ParamCheck;
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.entity.User;
 import cn.edu.fudan.campuservice.entity.UserDTO;
@@ -49,6 +50,31 @@ public class UserController {
             return Response.success(userService.getUser(id));
         } catch (NoSuchUserException e) {
             return new Response<>("400", "no such user", e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/getUncheckedUsers")
+    public Response getUncheckedUsers() {
+        return Response.success(userService.getUncheckedUsers());
+    }
+
+    @GetMapping("/user/checkPass")
+    public Response checkPass(@ParamCheck Integer userId) {
+        try {
+            userService.checkPass(userId);
+            return Response.success("operate successfully");
+        } catch (NoSuchUserException e) {
+            return new Response<>("400", "failed", e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/checkFail")
+    public Response checkFail(@ParamCheck Integer userId) {
+        try {
+            userService.checkFail(userId);
+            return Response.success("operate successfully");
+        } catch (NoSuchUserException e) {
+            return new Response<>("400", "failed", e.getMessage());
         }
     }
 }

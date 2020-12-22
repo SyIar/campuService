@@ -143,6 +143,7 @@ public class OrderService {
 
     public void refuseOrder(int orderId) {
         Order order = orderRepository.getOne(orderId);
+        order.setConfirmTime(new Date());
         order.setStatus(4);
         orderRepository.save(order);
     }

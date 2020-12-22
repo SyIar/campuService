@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,5 +44,29 @@ public class UserService {
             throw new NoSuchUserException();
         }
         return target.get().getPassword().equals(user.getPassword());
+    }
+
+    public List<User> getUncheckedUsers() {
+        return userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("balance"), -1));
+    }
+
+    public void checkPass(Integer userId) throws NoSuchUserException {
+        try {
+            User user = userRepository.getOne(userId);
+            user.setBalance(100);
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new NoSuchUserException();
+        }
+    }
+
+    public void checkFail(Integer userId) throws NoSuchUserException {
+        try {
+            User user = userRepository.getOne(userId);
+            user.setBalance(-2);
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new NoSuchUserException();
+        }
     }
 }

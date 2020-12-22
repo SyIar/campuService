@@ -5,7 +5,10 @@ import cn.edu.fudan.campuservice.entity.User;
 import cn.edu.fudan.campuservice.exception.NoSuchUserException;
 import cn.edu.fudan.campuservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -28,8 +31,17 @@ public class UserService {
         }
     }
 
+    public Optional<User> getUserByStudentId(Integer studentId) {
+        User user = new User();
+        user.setStudentId(studentId);
+        return userRepository.findOne(Example.of(user));
+    }
+
     public boolean authenUser(User user) throws NoSuchUserException {
-        User target = getUser(user.getUserId());
-        return target.getPassword().equals(user.getPassword());
+        Optional<User> target = getUserByStudentId(user.getStudentId());
+        if (!target.isPresent()) {
+            throw new NoSuchUserException();
+        }
+        return target.get().getPassword().equals(user.getPassword());
     }
 }

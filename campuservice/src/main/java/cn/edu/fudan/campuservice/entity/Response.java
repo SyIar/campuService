@@ -19,6 +19,10 @@ public class Response<T> {
         return new Response<>("200", "OK", data);
     }
 
+    public static <T> Response success(String message, T data) {
+        return new Response<>("200", message, data);
+    }
+
     @Override
     public String toString() {
         return "{" +

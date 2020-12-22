@@ -2,6 +2,7 @@ package cn.edu.fudan.campuservice.controller;
 
 import cn.edu.fudan.campuservice.entity.Response;
 import cn.edu.fudan.campuservice.entity.User;
+import cn.edu.fudan.campuservice.entity.UserDTO;
 import cn.edu.fudan.campuservice.exception.NoSuchUserException;
 import cn.edu.fudan.campuservice.service.UserService;
 import cn.edu.fudan.campuservice.utils.JwtUtil;
@@ -20,11 +21,11 @@ public class UserController {
             if (!userService.authenUser(user)) {
                 return new Response<>("401", "unauthorized", "wrong password");
             }
+            return Response.success(new UserDTO(userService.getUserByStudentId(user.getStudentId()).get().getUserId(),
+                    JwtUtil.generateToken(user)));
         } catch (NoSuchUserException e) {
             return new Response<>("401", "unauthorized", e.getMessage());
         }
-
-        return Response.success(JwtUtil.generateToken(user));
     }
 
     @GetMapping("/logout")
@@ -34,9 +35,12 @@ public class UserController {
 
     @PostMapping("/register")
     public Response register(@RequestBody User user) {
+        if (userService.getUserByStudentId(user.getStudentId()).isPresent()) {
+            return new Response<>("400", "register failed", "the studentId has already been registered");
+        }
         user.setBalance(-1);
-        userService.saveUser(user);
-        return Response.success(JwtUtil.generateToken(user));
+        User savedUser = userService.saveUser(user);
+        return Response.success(new UserDTO(savedUser.getUserId(), JwtUtil.generateToken(user)));
     }
 
     @GetMapping("/user/{id}")

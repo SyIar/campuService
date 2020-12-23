@@ -3,7 +3,7 @@
     <!-- 头部区域 -->
     <el-header>
       <div>
-        <span>欢迎，{{userId}}</span>
+        <span>欢迎，{{userName}}</span>
       </div>
       <el-button type="info" @click="exit">退出</el-button>
     </el-header>
@@ -76,15 +76,17 @@ export default {
   data () {
     return {
       userId: window.sessionStorage.getItem('userId'),
+      userName: window.sessionStorage.getItem('userName'),
       admin: Boolean(window.sessionStorage.getItem('admin') === 'true' ? 1 : 0),
       // 左侧菜单数据
       menuList: [
-        {"id":101,"authName":"发布订单","path":"post","children":[{"id":null,"authName":"我要发单","path":"post","children":[],"order":1},{"id":null,"authName":"状态查询","path":"wait","children":[],"order":2}],"order":1},
-        {"id":103,"authName":"接手订单","path":"search","children":[{"id":null,"authName":"搜索订单","path":"search","children":[],"order":1},{"id":null,"authName":"进行中订单","path":"run","children":[],"order":2}],"order":2},
-        {"id":125,"authName":"个人中心","path":"account","children":[{"id":null,"authName":"已发订单","path":"postedOrder","children":[],"order":1},{"id":null,"authName":"已接订单","path":"acceptedOrder","children":[],"order":2},{"id":null,"authName":"个人信息","path":"account","children":[],"order":3}],"order":3},
+        {"id":102,"authName":"首页","path":"home","children":[],"order":1},
+        {"id":101,"authName":"发布订单","path":"post","children":[{"id":null,"authName":"我要发单","path":"post","children":[],"order":1},{"id":null,"authName":"状态查询","path":"wait","children":[],"order":2}],"order":2},
+        {"id":103,"authName":"接手订单","path":"search","children":[{"id":null,"authName":"搜索订单","path":"search","children":[],"order":1},{"id":null,"authName":"进行中订单","path":"run","children":[],"order":2}],"order":3},
+        {"id":125,"authName":"个人中心","path":"account","children":[{"id":null,"authName":"已发订单","path":"postedOrder","children":[],"order":1},{"id":null,"authName":"已接订单","path":"acceptedOrder","children":[],"order":2},{"id":null,"authName":"个人信息","path":"account","children":[],"order":3}],"order":4},
       ],
       adminMenuList: [
-        {"id":145,"authName":"管理员","path":"users","children":[{"id":null,"authName":"我要发单","path":"post","children":[],"order":1},{"id":null,"authName":"状态查询","path":"wait","children":[],"order":2}],"order":4},
+        {"id":145,"authName":"管理员","path":"check","children":[{"id":null,"authName":"注册审核","path":"check","children":[],"order":1}],"order":5},
       ],
       // 菜单项icon
       iconsObj: {
@@ -124,7 +126,6 @@ export default {
       window.sessionStorage.setItem('balance', data.balance)
       window.sessionStorage.setItem('studentId', data.studentId)
       window.sessionStorage.setItem('studentName', data.studentName)
-      window.sessionStorage.setItem('userName', data.userName)
       // console.log(res)
     },
     // 点击按钮，切换按钮的折叠与展开

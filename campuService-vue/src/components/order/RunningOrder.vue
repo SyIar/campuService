@@ -52,7 +52,17 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleFinish(scope.row.orderId)">完成</el-button>
+            <el-popover
+              placement="top"
+              width="160"
+              v-model="visible">
+              <p>确定完成订单吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                <el-button size="mini" type="primary" @click="handleFinish(scope.row.orderId)">确定</el-button>
+              </div>
+              <el-button slot="reference">完成</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>

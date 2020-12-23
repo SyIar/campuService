@@ -16,6 +16,8 @@ const PostNewOrder = () => import('../components/order/PostNewOrder.vue')
 const Run = () => import('../components/order/RunningOrder.vue')
 const Wait = () => import('../components/order/WaitingOrder.vue')
 
+const Check = () => import('../components/admin/Check.vue')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -33,7 +35,8 @@ const routes = [
       { path: '/search', component: Search },
       { path: '/post', component: PostNewOrder },
       { path: '/run', component: Run },
-      { path: '/wait', component: Wait }]
+      { path: '/wait', component: Wait },
+      { path: '/check', component: Check}]
   }
 ]
 

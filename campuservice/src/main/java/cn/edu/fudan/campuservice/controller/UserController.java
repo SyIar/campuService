@@ -79,4 +79,9 @@ public class UserController {
             return new Response<>("400", "failed", e.getMessage());
         }
     }
+
+    @GetMapping("/user/getUsers")
+    public Response getUsers() {
+        return Response.success(userService.getUsers());
+    }
 }

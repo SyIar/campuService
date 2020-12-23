@@ -64,6 +64,11 @@ public class OrderController {
         return Response.success("insert successfully");
     }
 
+    @GetMapping("/getAllOrder")
+    public Response getAllOrder() {
+        return Response.success(orderService.getAllOrder());
+    }
+
     @GetMapping("/getOrderByPoster")
     public Response getOrderByPoster(@ParamCheck Integer posterId) {
         return Response.success(orderService.searchOrderByPoster(posterId));

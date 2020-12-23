@@ -69,4 +69,9 @@ public class UserService {
             throw new NoSuchUserException();
         }
     }
+
+    public List<User> getUsers() {
+        return userRepository.findAll((root, criteriaQuery, criteriaBuilder)
+                -> criteriaBuilder.greaterThanOrEqualTo(root.get("balance"), 0));
+    }
 }

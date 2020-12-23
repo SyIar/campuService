@@ -147,4 +147,8 @@ public class OrderService {
         order.setStatus(4);
         orderRepository.save(order);
     }
+
+    public List<Order> getAllOrder() {
+        return orderRepository.findAll();
+    }
 }

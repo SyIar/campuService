@@ -22,8 +22,9 @@ public class UserController {
             if (!userService.authenUser(user)) {
                 return new Response<>("401", "unauthorized", "wrong password");
             }
-            return Response.success(new UserDTO(userService.getUserByStudentId(user.getStudentId()).get().getUserId(),
-                    JwtUtil.generateToken(user)));
+            User u = userService.getUserByStudentId(user.getStudentId()).get();
+            return Response.success(new UserDTO(u.getUserId(),
+                    u.getUserName(), JwtUtil.generateToken(user)));
         } catch (NoSuchUserException e) {
             return new Response<>("401", "unauthorized", e.getMessage());
         }
@@ -40,8 +41,9 @@ public class UserController {
             return new Response<>("400", "register failed", "the studentId has already been registered");
         }
         user.setBalance(-1);
+        user.setIsAdmin(false);
         User savedUser = userService.saveUser(user);
-        return Response.success(new UserDTO(savedUser.getUserId(), JwtUtil.generateToken(user)));
+        return Response.success(new UserDTO(savedUser.getUserId(), savedUser.getUserName(), JwtUtil.generateToken(user)));
     }
 
     @GetMapping("/user/{id}")

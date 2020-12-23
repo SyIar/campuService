@@ -32,7 +32,7 @@ public class UserService {
         }
     }
 
-    public Optional<User> getUserByStudentId(Integer studentId) {
+    public Optional<User> getUserByStudentId(String studentId) {
         User user = new User();
         user.setStudentId(studentId);
         return userRepository.findOne(Example.of(user));

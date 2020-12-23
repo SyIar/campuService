@@ -25,11 +25,14 @@ public class User {
     private Integer balance;
 
     @Column(name = "student_id")
-    private Integer studentId;
+    private String studentId;
 
     @Column(name = "student_name")
     private String studentName;
 
     @Column(name = "is_admin")
     private Boolean isAdmin;
+
+    @Column(name = "user_photo")
+    private String userPhoto;
 }

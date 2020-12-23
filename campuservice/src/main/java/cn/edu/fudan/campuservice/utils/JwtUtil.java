@@ -49,7 +49,7 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
             User user = new User();
-            user.setStudentId((int) body.get("studentId"));
+            user.setStudentId((String) body.get("studentId"));
             user.setPassword((String) body.get("password"));
             System.out.println(user);
             System.out.println(jwtUtil.userService.authenUser(user));

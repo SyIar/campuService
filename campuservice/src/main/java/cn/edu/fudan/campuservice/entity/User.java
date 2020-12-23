@@ -31,5 +31,5 @@ public class User {
     private String studentName;
 
     @Column(name = "is_admin")
-    private boolean isAdmin;
+    private Boolean isAdmin;
 }

@@ -30,7 +30,7 @@
       @close="addDialogClose"
     >
       <!-- 添加用户的表单 -->
-      <el-form ref="addForm" :model="addUser">
+      <el-form ref="addForm" :model="addUser" :rules="addUserRules">
         <el-form-item prop="username" label="昵称">
           <el-input v-model="addUser.userName" placeholder="请输入位用户名" />
         </el-form-item>
@@ -43,9 +43,21 @@
         <el-form-item prop="username" label="学号">
           <el-input v-model="addUser.studentId" placeholder="请输入真实学号" />
         </el-form-item>
+        <el-upload
+          class="upload-demo"
+          drag
+          :action="uploadURL"
+          :headers="headersObj"
+          :on-success="handlerSuccess"
+          :before-upload="beforeUpload"
+          :limit=1  >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">请上传一卡通或学生证照片，只能上传jpg文件，且不超过2MB</div>
+        </el-upload>
         <el-form-item style="margin-top: 20px">
           <el-button @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="primary" @click="onAddUser">确定</el-button>
+          <el-button type="primary" @click="onAddUser" :disabled=flag>确定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -60,15 +72,15 @@ export default {
     return {
     // 登录表单的数据绑定对象
       loginForm: {
-        username: '1',
-        password: '123123'
+        username: '',
+        password: ''
       },
       // 表单的验证规则对象
       loginFormRules: {
         // 验证用户名是否合法
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          { required: true, message: '请输入学号', trigger: 'blur' },
+          { min: 1, max: 11, message: '长度为 11 个数字', trigger: 'blur' }
         ],
         // 验证密码是否合法
         password: [
@@ -76,33 +88,75 @@ export default {
           { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
         ]
       },
+      addUserRules: {
+        // 验证用户名是否合法
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 1, max: 6, message: '长度为 1 到 6 个字符', trigger: 'blur' }
+        ],
+        // 验证密码是否合法
+        password: [
+          { required: true, message: '请输入登录密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+        ],
+        studentName: [
+          { required: true, message: '请输入真实姓名', trigger: 'blur' },
+          { min: 2, max: 6, message: '长度在 2 到 6 个字符', trigger: 'blur' }
+        ],
+        studentId: [
+          { required: true, message: '请输入学号', trigger: 'blur' },
+          { min: 11, max: 11, message: '长度为 11 个数字', trigger: 'blur' }
+        ]
+      },
       dialogTableVisible: false, // 添加用户弹框
       addUser: {
         userName: '',
         password: '',
         studentId: '',
-        studentName: ''
+        studentName: '',
+        userPhotoUrl: '',
       },
+      // 上传图片的url
+      uploadURL: 'api/order/uploadPosterPhoto',
+      // 图片上传组件的headers请求头对象
+      headersObj: {
+        Authorization: window.sessionStorage.getItem('token')
+      },
+      flag: true
     }
   },
   methods: {
-    // 点击重置按钮，重置登录表单
-    resetLoginForm () {
-      // console.log(this);
-      this.$refs.loginFormRef.resetFields()
+    beforeUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
+    // 监听图片上传成功的事件
+    handlerSuccess(response) {
+      // this.addForm.pics = response.data.url
+      this.addUser.userPhotoUrl = response.data
+      this.flag = false
     },
     login () {
       this.$refs.loginFormRef.validate(async (valid) => {
         // console.log(valid)
         if (!valid) return 0
-        const { data: res } = await this.$http.get('api/login', { params: { userId: this.loginForm.username, password: this.loginForm.password } })
+        const { data: res } = await this.$http.get('api/login', { params: { studentId: this.loginForm.username, password: this.loginForm.password } })
         const { code } = res
         const { data } = res
         if (code !== '200') return this.$message.error('登录失败！')
         this.$message.success('登录成功！')
         // console.log(res)
-        window.sessionStorage.setItem('token', data)
-        window.sessionStorage.setItem('userId', this.loginForm.username)
+        window.sessionStorage.setItem('token', data.token)
+        window.sessionStorage.setItem('userId', data.userId)
+        window.sessionStorage.setItem('userName', data.userName)
         await this.$router.push('/home')
         // console.log(res)
         // 1.将登录成功之后的 token，保存到客户端的 sessionStorage 中

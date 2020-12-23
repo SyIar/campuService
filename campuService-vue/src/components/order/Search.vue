@@ -62,6 +62,11 @@
             <el-button size="mini" @click="handleURL(scope.row.posterPhotoUrl)">点击查看</el-button>
           </template>
         </el-table-column>
+        <el-table-column label="详情">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleAccept(scope.row.orderId)">点击查看</el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" @click="handleAccept(scope.row.orderId)">接单</el-button>

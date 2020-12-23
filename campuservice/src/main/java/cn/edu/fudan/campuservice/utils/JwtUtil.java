@@ -29,7 +29,7 @@ public class JwtUtil {
 
     public static String generateToken(User user) {
         HashMap<String, Object> body = new HashMap<>();
-        body.put("studentId", user.getStudentId());
+        body.put("userId", user.getUserId());
         body.put("password", user.getPassword());
         return Jwts.builder()
                 .setClaims(body)
@@ -49,7 +49,7 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
             User user = new User();
-            user.setStudentId((String) body.get("studentId"));
+            user.setUserId((int) body.get("userId"));
             user.setPassword((String) body.get("password"));
             System.out.println(user);
             System.out.println(jwtUtil.userService.authenUser(user));

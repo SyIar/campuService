@@ -19,12 +19,13 @@ public class UserController {
     @GetMapping("/login")
     public Response login(User user) {
         try {
+            user.setUserId(userService.getUserByStudentId(user.getStudentId()).get().getUserId());
             if (!userService.authenUser(user)) {
                 return new Response<>("401", "unauthorized", "wrong password");
             }
             User u = userService.getUserByStudentId(user.getStudentId()).get();
             return Response.success(new UserDTO(u.getUserId(),
-                    u.getUserName(), JwtUtil.generateToken(user)));
+                    u.getUserName(), JwtUtil.generateToken(u)));
         } catch (NoSuchUserException e) {
             return new Response<>("401", "unauthorized", e.getMessage());
         }

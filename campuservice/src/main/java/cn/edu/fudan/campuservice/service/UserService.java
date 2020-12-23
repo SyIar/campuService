@@ -39,11 +39,8 @@ public class UserService {
     }
 
     public boolean authenUser(User user) throws NoSuchUserException {
-        Optional<User> target = getUserByStudentId(user.getStudentId());
-        if (!target.isPresent()) {
-            throw new NoSuchUserException();
-        }
-        return target.get().getPassword().equals(user.getPassword());
+        User target = getUser(user.getUserId());
+        return target.getPassword().equals(user.getPassword());
     }
 
     public List<User> getUncheckedUsers() {

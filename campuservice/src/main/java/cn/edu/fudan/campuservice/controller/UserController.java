@@ -24,6 +24,9 @@ public class UserController {
                 return new Response<>("401", "unauthorized", "wrong password");
             }
             User u = userService.getUserByStudentId(user.getStudentId()).get();
+            if (u.getBalance() == -1) {
+                return new Response<>("402", "failed", "account unchecked");
+            }
             return Response.success(new UserDTO(u.getUserId(),
                     u.getUserName(), JwtUtil.generateToken(u)));
         } catch (NoSuchUserException e) {
